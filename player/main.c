@@ -6,6 +6,7 @@ void main(){
 	printf("이번엔 main이라능!!!!!\n");
 	func2();
 	printf("github -_-");
+	printf("github에서 수정했음.")
 	printf("hello.... merge123 3\n");
 	func1();
 	printf("hello bug123 2\n");

@@ -1,3 +1,4 @@
+//각 버튼에 해당하는 배열이 잘 들어가는지 확인
 #include<gtk/gtk.h>
 #include<stdlib.h>
 

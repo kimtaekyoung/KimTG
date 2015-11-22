@@ -55,7 +55,7 @@ int click = 0;		//첫번째로 카드를 뒤집는건지 두번째 인지 판별
 int check[4][4] = {0,};
 int start =0;		//게임의 시작 여부를 알리는 부분.
 int first_1, first_2, second_1, second_2;
-int i=0;
+
 int done_label()	//시간이 0이 될 경우 done를 출력해는 부분
 {
 	sprintf(buf2,"%s","done");

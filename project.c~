@@ -1,3 +1,4 @@
+
 GtkWidget* window;
 GtkWidget* timelabel;
 GtkWidget* scorelabel;

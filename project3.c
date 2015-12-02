@@ -3,7 +3,6 @@
 #include<unistd.h>
 #include<string.h>
 
-//gtk type
 GtkWidget* window;
 GtkWidget* timelabel;
 GtkWidget* scorelabel;
@@ -39,7 +38,7 @@ GtkWidget* button15;
 GtkWidget* button16;
 
 const gchar* random_card[5][4][4];	//5개의 4*4 문양 저장.
-int Time = 5;		//1분
+int Time = 60;		//1분
 char buf[100];		//시간 출력을 위한 버퍼
 char buf2[100];	//done 출력을 위한 버퍼
 char buf3[100];	//버튼에 문자를 출력하기위한 버퍼
@@ -56,7 +55,7 @@ int click = 0;		//첫번째로 카드를 뒤집는건지 두번째 인지 판별
 int check[4][4] = {0,};
 int start =0;		//게임의 시작 여부를 알리는 부분.
 int first_1, first_2, second_1, second_2;
-
+int i=0;
 int done_label()	//시간이 0이 될 경우 done를 출력해는 부분
 {
 	sprintf(buf2,"%s","done");
@@ -64,7 +63,7 @@ int done_label()	//시간이 0이 될 경우 done를 출력해는 부분
 	return 0;
 }
 void card_set(){
-random_card[0][0][0] = "A";
+	random_card[0][0][0] = "A";
 	random_card[0][0][1] = "B";
 	random_card[0][0][2] = "C";
 	random_card[0][0][3] = "D";
@@ -80,6 +79,7 @@ random_card[0][0][0] = "A";
 	random_card[0][3][1] = "C";
 	random_card[0][3][2] = "B";
 	random_card[0][3][3] = "D";
+
 	random_card[1][0][0] = "T";
 	random_card[1][0][1] = "Y";
 	random_card[1][0][2] = "U";
@@ -96,22 +96,24 @@ random_card[0][0][0] = "A";
 	random_card[1][3][1] = "U";
 	random_card[1][3][2] = "E";
 	random_card[1][3][3] = "I";
+
 	random_card[2][0][0] = "A";
-	random_card[2][0][1] = "A";
-	random_card[2][0][2] = "A";
-	random_card[2][0][3] = "A";
-	random_card[2][1][0] = "A";
-	random_card[2][1][1] = "A";
-	random_card[2][1][2] = "A";
-	random_card[2][1][3] = "A";
-	random_card[2][2][0] = "A";
+	random_card[2][0][1] = "D";
+	random_card[2][0][2] = "S";
+	random_card[2][0][3] = ".";
+	random_card[2][1][0] = ",";
+	random_card[2][1][1] = ";";
+	random_card[2][1][2] = ";";
+	random_card[2][1][3] = "S";
+	random_card[2][2][0] = "D";
 	random_card[2][2][1] = "A";
-	random_card[2][2][2] = "A";
-	random_card[2][2][3] = "A";
-	random_card[2][3][0] = "A";
-	random_card[2][3][1] = "A";
-	random_card[2][3][2] = "A";
-	random_card[2][3][3] = "A";
+	random_card[2][2][2] = ",";
+	random_card[2][2][3] = ".";
+	random_card[2][3][0] = "W";
+	random_card[2][3][1] = "P";
+	random_card[2][3][2] = "W";
+	random_card[2][3][3] = "P";
+
 	random_card[3][0][0] = "q";
 	random_card[3][0][1] = "w";
 	random_card[3][0][2] = "e";
@@ -148,7 +150,6 @@ random_card[0][0][0] = "A";
 }
 
 void clear(){
-//init function
 	int a,b;
 	for(a=0;a<4;a++){
 		for(b=0;b<4;b++){
@@ -182,8 +183,6 @@ void clear(){
 }
 void space()		//모든 button에 빈공간을 넣어주는 부분.
 {
-//success 1
-//fail 0
 	if(check[0][0] != 1){
 		gtk_button_set_label(GTK_BUTTON(button1)," ");
 	}
@@ -243,15 +242,14 @@ int timer_handler(gpointer data)
 	sprintf(buf,"Remaining Time: %d:%02d",m,s);
 	//timelabel에 buf값 출력
 	gtk_label_set_text(GTK_LABEL(timelabel),buf);
-	if(Time > 0)	return 1; //시간이 아직 0:00보다 클 경우 계속 실행
+	if(Time > 0 && cnt<8 )	return 1; //시간이 아직 0:00보다 클 경우 계속 실행
 	else{		//시간이 0과 같거나 작을경우
+		sleep(1);
 		clear();
 		return done_label();
 	}
 }
 void buttonClicked(GtkWidget *widget){	
-//game ing start == 1
-//game stop == 0
 	if(start == 0){
 		if(widget == button1)
 			version = 0;
@@ -275,6 +273,7 @@ void buttonClicked(GtkWidget *widget){
 				first = random_card[version][0][0];
 				first_1=0;
 				first_2=0;
+				gtk_widget_set_sensitive (button1, TRUE);
 			}else if(widget == button2){
 				gtk_button_set_label(GTK_BUTTON(button2),random_card[version][0][1]);
 				first = random_card[version][0][1];
@@ -483,7 +482,6 @@ void buttonClicked(GtkWidget *widget){
 int main(int argc, char *argv[])
 {
 	gtk_init(&argc, &argv);
-	srand((unsigned)time(NULL)); //계속 바뀌는 랜덤값을 받기 위한 부분
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	timelabel = gtk_label_new("Remaining Time: 1:00");
@@ -580,7 +578,6 @@ int main(int argc, char *argv[])
 	gtk_container_add(GTK_CONTAINER(vbox1),scorelabel);		
 	gtk_container_add(GTK_CONTAINER(vbox1),donelabel);	
 	//button클릭시 이벤트 발생 부분.
-	//clicked event enrollment and callback function
 	g_signal_connect(G_OBJECT(button1),"clicked", G_CALLBACK(buttonClicked), NULL);
 	g_signal_connect(G_OBJECT(button2),"clicked", G_CALLBACK(buttonClicked), NULL);
 	g_signal_connect(G_OBJECT(button3),"clicked", G_CALLBACK(buttonClicked), NULL);

@@ -149,7 +149,7 @@ void card_set(){
 	random_card[4][3][2] = "4";
 	random_card[4][3][3] = "a";
 }
-int click_claer(int check_click[][4],int i, int j){
+int click_clear(int check_click[][4],int i, int j){
 	if(check_click[i][j]!=1)
 		return 0;
 	else
@@ -274,12 +274,12 @@ void buttonClicked(GtkWidget *widget){
 		return;
 	}
 	else{
-		for(i=0;i<4;i++){
-			for(j=0;j<4;j++){
-				click_check[i][j] = click_claer(check,i,j);
-			}
-		}
 		if(click == 0){
+			for(i=0;i<4;i++){
+				for(j=0;j<4;j++){
+					click_check[i][j] = click_clear(check,i,j);
+				}
+			}
 			if(widget == button1){
 				if(click_check[0][0] != 1){
 					gtk_button_set_label(GTK_BUTTON(button1),random_card[version][0][0]);

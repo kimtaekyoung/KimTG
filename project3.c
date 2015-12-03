@@ -149,16 +149,11 @@ void card_set(){
 	random_card[4][3][2] = "4";
 	random_card[4][3][3] = "a";
 }
-void click_claer(){
-	int i,j;
-	for(i=0;i<4;i++){
-		for(j=0;j<4;j++){
-			if(check[i][j]!=1)
-				click_check[i][j] = 0;
-			else
-				click_check[i][j] = 1;	
-		}
-	}
+int click_claer(int check_click[][4],int i, int j){
+	if(check_click[i][j]!=1)
+		return 0;
+	else
+		return 1;	
 }
 void clear(){
 	int a,b;
@@ -261,6 +256,7 @@ int timer_handler(gpointer data)
 	}
 }
 void buttonClicked(GtkWidget *widget){	
+	int i, j;
 	if(start == 0){
 		if(widget == button1)
 			version = 0;
@@ -278,7 +274,11 @@ void buttonClicked(GtkWidget *widget){
 		return;
 	}
 	else{
-		click_claer();
+		for(i=0;i<4;i++){
+			for(j=0;j<4;j++){
+				click_check[i][j] = click_claer(check,i,j);
+			}
+		}
 		if(click == 0){
 			if(widget == button1){
 				if(click_check[0][0] != 1){

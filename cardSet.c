@@ -1,3 +1,5 @@
+#include "my_cardset.h"
+
 void card_set(){
 	random_card[0][0][0] = "A";
 	random_card[0][0][1] = "B";

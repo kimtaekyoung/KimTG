@@ -1,1 +1,8 @@
-dd
+libmy_lib.a: clickclear.o
+	ar rc libmy_lib.a clickclear.o
+
+clickclear.o: clickclear.c
+	gcc -c clickclear.c
+
+clean: 
+	rm *.o *.a

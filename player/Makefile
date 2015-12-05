@@ -1,2 +1,5 @@
 project3Test: project3Test.c
-	gcc project3Test.c -o project3Test -L../lib/ -lmylib `pkg-config gtk+-2.0 --cflags --libs `
+	gcc project3Test.c -o project3Test -L../lib/ -lmy_lib `pkg-config gtk+-2.0 --cflags --libs `
+
+clean:
+	rm project3Test

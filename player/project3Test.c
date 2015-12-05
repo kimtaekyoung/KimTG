@@ -3,7 +3,6 @@
 #include<unistd.h>
 #include<string.h>
 
-//gtk type
 GtkWidget* window;
 GtkWidget* timelabel;
 GtkWidget* scorelabel;
@@ -39,7 +38,7 @@ GtkWidget* button15;
 GtkWidget* button16;
 
 const gchar* random_card[5][4][4];	//5개의 4*4 문양 저장.
-int Time = 5;		//1분
+int Time = 60;		//1분
 char buf[100];		//시간 출력을 위한 버퍼
 char buf2[100];	//done 출력을 위한 버퍼
 char buf3[100];	//버튼에 문자를 출력하기위한 버퍼
@@ -53,10 +52,11 @@ int s=0;				//초를 저장할 변수
 int cnt = 0;				//맞춘 수를 저장해줄 변수
 int score = 0;			//점수를 저장하는 변수(맞추면 +5 틀리면 -1);
 int click = 0;		//첫번째로 카드를 뒤집는건지 두번째 인지 판별하는 변수.
-int check[4][4] = {0,};
+int check[4][4] = {0,};	//맞춘 문제에 해당하는 버튼들을 open상태로 놔둠.
+int click_check[4][4] = {0,};//버튼이 클릭 되었는지 확인.
 int start =0;		//게임의 시작 여부를 알리는 부분.
 int first_1, first_2, second_1, second_2;
-
+int i=0;
 int done_label()	//시간이 0이 될 경우 done를 출력해는 부분
 {
 	sprintf(buf2,"%s","done");
@@ -64,7 +64,7 @@ int done_label()	//시간이 0이 될 경우 done를 출력해는 부분
 	return 0;
 }
 void card_set(){
-random_card[0][0][0] = "A";
+	random_card[0][0][0] = "A";
 	random_card[0][0][1] = "B";
 	random_card[0][0][2] = "C";
 	random_card[0][0][3] = "D";
@@ -80,6 +80,7 @@ random_card[0][0][0] = "A";
 	random_card[0][3][1] = "C";
 	random_card[0][3][2] = "B";
 	random_card[0][3][3] = "D";
+
 	random_card[1][0][0] = "T";
 	random_card[1][0][1] = "Y";
 	random_card[1][0][2] = "U";
@@ -96,22 +97,24 @@ random_card[0][0][0] = "A";
 	random_card[1][3][1] = "U";
 	random_card[1][3][2] = "E";
 	random_card[1][3][3] = "I";
+
 	random_card[2][0][0] = "A";
-	random_card[2][0][1] = "A";
-	random_card[2][0][2] = "A";
-	random_card[2][0][3] = "A";
-	random_card[2][1][0] = "A";
-	random_card[2][1][1] = "A";
-	random_card[2][1][2] = "A";
-	random_card[2][1][3] = "A";
-	random_card[2][2][0] = "A";
+	random_card[2][0][1] = "D";
+	random_card[2][0][2] = "S";
+	random_card[2][0][3] = ".";
+	random_card[2][1][0] = ",";
+	random_card[2][1][1] = ";";
+	random_card[2][1][2] = ";";
+	random_card[2][1][3] = "S";
+	random_card[2][2][0] = "D";
 	random_card[2][2][1] = "A";
-	random_card[2][2][2] = "A";
-	random_card[2][2][3] = "A";
-	random_card[2][3][0] = "A";
-	random_card[2][3][1] = "A";
-	random_card[2][3][2] = "A";
-	random_card[2][3][3] = "A";
+	random_card[2][2][2] = ",";
+	random_card[2][2][3] = ".";
+	random_card[2][3][0] = "W";
+	random_card[2][3][1] = "P";
+	random_card[2][3][2] = "W";
+	random_card[2][3][3] = "P";
+
 	random_card[3][0][0] = "q";
 	random_card[3][0][1] = "w";
 	random_card[3][0][2] = "e";
@@ -146,9 +149,15 @@ random_card[0][0][0] = "A";
 	random_card[4][3][2] = "4";
 	random_card[4][3][3] = "a";
 }
-
+/* chanage code from function to static library
+int click_clear(int check_click[][4],int i, int j){
+	if(check_click[i][j]!=1)
+		return 0;
+	else
+		return 1;	
+}
+*/
 void clear(){
-//init function
 	int a,b;
 	for(a=0;a<4;a++){
 		for(b=0;b<4;b++){
@@ -182,8 +191,6 @@ void clear(){
 }
 void space()		//모든 button에 빈공간을 넣어주는 부분.
 {
-//success 1
-//fail 0
 	if(check[0][0] != 1){
 		gtk_button_set_label(GTK_BUTTON(button1)," ");
 	}
@@ -243,15 +250,15 @@ int timer_handler(gpointer data)
 	sprintf(buf,"Remaining Time: %d:%02d",m,s);
 	//timelabel에 buf값 출력
 	gtk_label_set_text(GTK_LABEL(timelabel),buf);
-	if(Time > 0)	return 1; //시간이 아직 0:00보다 클 경우 계속 실행
+	if(Time > 0 && cnt<8 )	return 1; //시간이 아직 0:00보다 클 경우 계속 실행
 	else{		//시간이 0과 같거나 작을경우
+		sleep(1);
 		clear();
 		return done_label();
 	}
 }
 void buttonClicked(GtkWidget *widget){	
-//game ing start == 1
-//game stop == 0
+	int i, j;
 	if(start == 0){
 		if(widget == button1)
 			version = 0;
@@ -270,210 +277,326 @@ void buttonClicked(GtkWidget *widget){
 	}
 	else{
 		if(click == 0){
-			if(widget == button1){
-				gtk_button_set_label(GTK_BUTTON(button1),random_card[version][0][0]);
-				first = random_card[version][0][0];
-				first_1=0;
-				first_2=0;
-			}else if(widget == button2){
-				gtk_button_set_label(GTK_BUTTON(button2),random_card[version][0][1]);
-				first = random_card[version][0][1];
-				first_1=0;
-				first_2=1;
-			}else if(widget == button3){
-				gtk_button_set_label(GTK_BUTTON(button3),random_card[version][0][2]);
-				first = random_card[version][0][2];
-				first_1=0;
-				first_2=2;
-			}else if(widget == button4){
-				gtk_button_set_label(GTK_BUTTON(button4),random_card[version][0][3]);
-				first = random_card[version][0][3];
-				first_1=0;
-				first_2=3;
-			}else if(widget == button5){
-				gtk_button_set_label(GTK_BUTTON(button5),random_card[version][1][0]);
-				first = random_card[version][1][0];
-				first_1=1;
-				first_2=0;
-			}else if(widget == button6){
-				gtk_button_set_label(GTK_BUTTON(button6),random_card[version][1][1]);
-				first = random_card[version][1][1];
-				first_1=1;
-				first_2=1;
-			}else if(widget == button7){
-				gtk_button_set_label(GTK_BUTTON(button7),random_card[version][1][2]);
-				first = random_card[version][1][2];
-				first_1=1;
-				first_2=2;
-			}else if(widget == button8){
-				gtk_button_set_label(GTK_BUTTON(button8),random_card[version][1][3]);
-				first = random_card[version][1][3];
-				first_1=1;
-				first_2=3;
-			}else if(widget == button9){
-				gtk_button_set_label(GTK_BUTTON(button9),random_card[version][2][0]);
-				first = random_card[version][2][0];
-				first_1=2;
-				first_2=0;
-			}else if(widget == button10){
-				gtk_button_set_label(GTK_BUTTON(button10),random_card[version][2][1]);
-				first = random_card[version][2][1];
-				first_1=2;
-				first_2=1;
-			}else if(widget == button11){
-				gtk_button_set_label(GTK_BUTTON(button11),random_card[version][2][2]);
-				first = random_card[version][2][2];
-				first_1=2;
-				first_2=2;
-			}else if(widget == button12){
-				gtk_button_set_label(GTK_BUTTON(button12),random_card[version][2][3]);
-				first = random_card[version][2][3];
-				first_1=2;
-				first_2=3;
-			}else if(widget == button13){
-				gtk_button_set_label(GTK_BUTTON(button13),random_card[version][3][0]);
-				first = random_card[version][3][0];
-				first_1=3;
-				first_2=0;
-			}else if(widget == button14){
-				gtk_button_set_label(GTK_BUTTON(button14),random_card[version][3][1]);
-				first = random_card[version][3][1];
-				first_1=3;
-				first_2=1;
-			}else if(widget == button15){
-				gtk_button_set_label(GTK_BUTTON(button15),random_card[version][3][2]);
-				first = random_card[version][3][2];
-				first_1=3;
-				first_2=2;
-			}else if(widget == button16){
-				gtk_button_set_label(GTK_BUTTON(button16),random_card[version][3][3]);
-				first = random_card[version][3][3];
-				first_1=3;
-				first_2=3;
+			for(i=0;i<4;i++){
+				for(j=0;j<4;j++){
+					click_check[i][j] = click_clear(check,i,j);
+				}
 			}
-			click = 1;
+			if(widget == button1){
+				if(click_check[0][0] != 1){
+					gtk_button_set_label(GTK_BUTTON(button1),random_card[version][0][0]);
+					first = random_card[version][0][0];
+					click_check[0][0] = 1;
+					first_1=0;
+					first_2=0;
+					click = 1;
+				}
+			}else if(widget == button2){
+				if(click_check[0][1] != 1){
+					gtk_button_set_label(GTK_BUTTON(button2),random_card[version][0][1]);
+					first = random_card[version][0][1];
+					click_check[0][1] = 1;
+					first_1=0;
+					first_2=1;
+					click = 1;
+				}
+			}else if(widget == button3){
+				if(click_check[0][2] != 1){
+					gtk_button_set_label(GTK_BUTTON(button3),random_card[version][0][2]);
+					first = random_card[version][0][2];
+					click_check[0][2] = 1;
+					first_1=0;
+					first_2=2;
+					click = 1;
+				}
+			}else if(widget == button4){
+				if(click_check[0][3] != 1){
+					gtk_button_set_label(GTK_BUTTON(button4),random_card[version][0][3]);
+					first = random_card[version][0][3];
+					click_check[0][3] = 1;
+					first_1=0;
+					first_2=3;
+					click = 1;
+				}
+			}else if(widget == button5){
+				if(click_check[1][0] != 1){
+					gtk_button_set_label(GTK_BUTTON(button5),random_card[version][1][0]);
+					first = random_card[version][1][0];
+					click_check[1][0] = 1;
+					first_1=1;
+					first_2=0;
+					click = 1;
+				}
+			}else if(widget == button6){
+				if(click_check[1][1] != 1){
+					gtk_button_set_label(GTK_BUTTON(button6),random_card[version][1][1]);
+					first = random_card[version][1][1];
+					click_check[1][1] = 1;
+					first_1=1;
+					first_2=1;
+					click = 1;
+				}
+			}else if(widget == button7){
+				if(click_check[1][2] != 1){
+					gtk_button_set_label(GTK_BUTTON(button7),random_card[version][1][2]);
+					first = random_card[version][1][2];
+					click_check[1][2] = 1;
+					first_1=1;
+					first_2=2;
+					click = 1;
+				}
+			}else if(widget == button8){
+				if(click_check[1][3] != 1){
+					gtk_button_set_label(GTK_BUTTON(button8),random_card[version][1][3]);
+					first = random_card[version][1][3];
+					click_check[1][3] = 1;
+					first_1=1;
+					first_2=3;
+					click = 1;
+				}
+			}else if(widget == button9){
+				if(click_check[2][0] != 1){
+					gtk_button_set_label(GTK_BUTTON(button9),random_card[version][2][0]);
+					first = random_card[version][2][0];
+					click_check[2][0] = 1;
+					first_1=2;
+					first_2=0;
+					click = 1;
+				}
+			}else if(widget == button10){
+				if(click_check[2][1] != 1){
+					gtk_button_set_label(GTK_BUTTON(button10),random_card[version][2][1]);
+					first = random_card[version][2][1];
+					click_check[2][1] = 1;
+					first_1=2;
+					first_2=1;
+					click = 1;
+				}
+			}else if(widget == button11){
+				if(click_check[2][2] != 1){
+					gtk_button_set_label(GTK_BUTTON(button11),random_card[version][2][2]);
+					first = random_card[version][2][2];
+					click_check[2][2] = 1;
+					first_1=2;
+					first_2=2;
+					click = 1;
+				}
+			}else if(widget == button12){
+				if(click_check[2][3] != 1){
+					gtk_button_set_label(GTK_BUTTON(button12),random_card[version][2][3]);
+					first = random_card[version][2][3];
+					click_check[2][3] = 1;
+					first_1=2;
+					first_2=3;
+					click = 1;
+				}
+			}else if(widget == button13){
+				if(click_check[3][0] != 1){
+					gtk_button_set_label(GTK_BUTTON(button13),random_card[version][3][0]);
+					first = random_card[version][3][0];
+					click_check[3][0] = 1;
+					first_1=3;
+					first_2=0;
+					click = 1;
+				}
+			}else if(widget == button14){
+				if(click_check[3][1] != 1){
+					gtk_button_set_label(GTK_BUTTON(button14),random_card[version][3][1]);
+					first = random_card[version][3][1];
+					click_check[3][1] = 1;
+					first_1=3;
+					first_2=1;
+					click = 1;
+				}
+			}else if(widget == button15){
+				if(click_check[3][2] != 1){
+					gtk_button_set_label(GTK_BUTTON(button15),random_card[version][3][2]);
+					first = random_card[version][3][2];
+					click_check[3][2] = 1;
+					first_1=3;
+					first_2=2;
+					click = 1;
+				}
+			}else if(widget == button16){
+				if(click_check[3][3] != 1){
+					gtk_button_set_label(GTK_BUTTON(button16),random_card[version][3][3]);
+					first = random_card[version][3][3];
+					click_check[3][3] = 1;
+					first_1=3;
+					first_2=3;
+					click = 1;
+				}
+			}
 		}
 		//문제 맞추면 점수 올리는 부분.
 		else if(click == 1)
 		{
 			if(widget == button1){
-				second = random_card[version][0][0];
-				gtk_button_set_label(GTK_BUTTON(button1),random_card[version][0][0]);
-				second_1=0;
-				second_2=0;
+				if(click_check[0][0] != 1){
+					second = random_card[version][0][0];
+					gtk_button_set_label(GTK_BUTTON(button1),random_card[version][0][0]);
+					second_1=0;
+					second_2=0;
+					click = 0;
+				}
 			}
 			else if(widget == button2){
-				gtk_button_set_label(GTK_BUTTON(button2),random_card[version][0][1]);
-				second = random_card[version][0][1];
-				second_1=0;
-				second_2=1;
+				if(click_check[0][1] != 1){
+					gtk_button_set_label(GTK_BUTTON(button2),random_card[version][0][1]);
+					second = random_card[version][0][1];
+					second_1=0;
+					second_2=1;
+					click = 0;
+				}
 			}
 			else if(widget == button3){
-				gtk_button_set_label(GTK_BUTTON(button3),random_card[version][0][2]);
-				second = random_card[version][0][2];
-				second_1=0;
-				second_2=2;
+				if(click_check[0][2] != 1){
+					gtk_button_set_label(GTK_BUTTON(button3),random_card[version][0][2]);
+					second = random_card[version][0][2];
+					second_1=0;
+					second_2=2;
+					click = 0;
+				}
 			}
 			else if(widget == button4){
-				gtk_button_set_label(GTK_BUTTON(button4),random_card[version][0][3]);
-				second = random_card[version][0][3];
-				second_1=0;
-				second_2=3;
+				if(click_check[0][3] != 1){
+					gtk_button_set_label(GTK_BUTTON(button4),random_card[version][0][3]);
+					second = random_card[version][0][3];
+					second_1=0;
+					second_2=3;
+					click = 0;
+				}
 			}
 			else if(widget == button5){
-				gtk_button_set_label(GTK_BUTTON(button5),random_card[version][1][0]);
-				second = random_card[version][1][0];
-				second_1=1;
-				second_2=0;
+				if(click_check[1][0] != 1){
+					gtk_button_set_label(GTK_BUTTON(button5),random_card[version][1][0]);
+					second = random_card[version][1][0];
+					second_1=1;
+					second_2=0;
+					click = 0;
+				}
 			}
 			else if(widget == button6){
-				gtk_button_set_label(GTK_BUTTON(button6),random_card[version][1][1]);
-				second = random_card[version][1][1];
-				second_1=1;
-				second_2=1;
+				if(click_check[1][1] != 1){
+					gtk_button_set_label(GTK_BUTTON(button6),random_card[version][1][1]);
+					second = random_card[version][1][1];
+					second_1=1;
+					second_2=1;
+					click = 0;
+				}
 			}
 			else if(widget == button7){
-				gtk_button_set_label(GTK_BUTTON(button7),random_card[version][1][2]);
-				second = random_card[version][1][2];
-				second_1=1;
-				second_2=2;
+				if(click_check[1][2] != 1){
+					gtk_button_set_label(GTK_BUTTON(button7),random_card[version][1][2]);
+					second = random_card[version][1][2];
+					second_1=1;
+					second_2=2;
+					click = 0;
+				}
 			}
 			else if(widget == button8){
-				gtk_button_set_label(GTK_BUTTON(button8),random_card[version][1][3]);
-				second = random_card[version][1][3];
-				second_1=1;
-				second_2=3;
+				if(click_check[1][3] != 1){
+					gtk_button_set_label(GTK_BUTTON(button8),random_card[version][1][3]);
+					second = random_card[version][1][3];
+					second_1=1;
+					second_2=3;
+					click = 0;
+				}
 			}
 			else if(widget == button9){
-				gtk_button_set_label(GTK_BUTTON(button9),random_card[version][2][0]);
-				second = random_card[version][2][0];
-				second_1=2;
-				second_2=0;
+				if(click_check[2][0] != 1){
+					gtk_button_set_label(GTK_BUTTON(button9),random_card[version][2][0]);
+					second = random_card[version][2][0];
+					second_1=2;
+					second_2=0;
+					click = 0;
+				}
 			}
 			else if(widget == button10){
-				gtk_button_set_label(GTK_BUTTON(button10),random_card[version][2][1]);
-				second = random_card[version][2][1];
-				second_1=2;
-				second_2=1;
+				if(click_check[2][1] != 1){
+					gtk_button_set_label(GTK_BUTTON(button10),random_card[version][2][1]);
+					second = random_card[version][2][1];
+					second_1=2;
+					second_2=1;
+					click = 0;
+				}
 			}
 			else if(widget == button11){
-				gtk_button_set_label(GTK_BUTTON(button11),random_card[version][2][2]);
-				second = random_card[version][2][2];
-				second_1=2;
-				second_2=2;
+				if(click_check[2][2] != 1){
+					gtk_button_set_label(GTK_BUTTON(button11),random_card[version][2][2]);
+					second = random_card[version][2][2];
+					second_1=2;
+					second_2=2;
+					click = 0;
+				}
 			}
 			else if(widget == button12){
-				gtk_button_set_label(GTK_BUTTON(button12),random_card[version][2][3]);
-				second = random_card[version][2][3];
-				second_1=2;
-				second_2=3;
+				if(click_check[2][3] != 1){
+					gtk_button_set_label(GTK_BUTTON(button12),random_card[version][2][3]);
+					second = random_card[version][2][3];
+					second_1=2;
+					second_2=3;
+					click = 0;
+				}
 			}
 			else if(widget == button13){
-				gtk_button_set_label(GTK_BUTTON(button13),random_card[version][3][0]);
-				second = random_card[version][3][0];
-				second_1=3;
-				second_2=0;
+				if(click_check[3][0] != 1){
+					gtk_button_set_label(GTK_BUTTON(button13),random_card[version][3][0]);
+					second = random_card[version][3][0];
+					second_1=3;
+					second_2=0;
+					click = 0;
+				}
 			}
 			else if(widget == button14){
-				gtk_button_set_label(GTK_BUTTON(button14),random_card[version][3][1]);
-				second = random_card[version][3][1];
-				second_1=3;
-				second_2=1;
+				if(click_check[3][1] != 1){
+					gtk_button_set_label(GTK_BUTTON(button14),random_card[version][3][1]);
+					second = random_card[version][3][1];
+					second_1=3;
+					second_2=1;
+					click = 0;
+				}
 			}
 			else if(widget == button15){
-				gtk_button_set_label(GTK_BUTTON(button15),random_card[version][3][2]);
-				second = random_card[version][3][2];
-				second_1=3;
-				second_2=2;
+				if(click_check[3][2] != 1){
+					gtk_button_set_label(GTK_BUTTON(button15),random_card[version][3][2]);
+					second = random_card[version][3][2];
+					second_1=3;
+					second_2=2;
+					click = 0;
+				}
 			}
 			else if(widget == button16){
-				gtk_button_set_label(GTK_BUTTON(button16),random_card[version][3][3]);
-				second = random_card[version][3][3];
-				second_1=3;
-				second_2=3;
-			}
-			click = 0;
-
-			if(strcmp(first,second)==0 && ((first_1 != second_1) || (first_2 != second_2))){
-				cnt++;
-				score += 5;
-				check[first_1][first_2] = 1;
-				check[second_1][second_2] = 1;
-				sprintf(buf5,"맞춘 문제 수 : %d 점수 : %d",cnt,score);
-				gtk_label_set_text(GTK_LABEL(scorelabel),buf5);
-			}
-			else
-			{
-				int i,j;
-				j=0;
-				if(score != 0)
-					score -= 1;
-				for(i=0;i<400000;i++){
-					j=j+1;
+				if(click_check[3][3] != 1){
+					gtk_button_set_label(GTK_BUTTON(button16),random_card[version][3][3]);
+					second = random_card[version][3][3];
+					second_1=3;
+					second_2=3;
+					click = 0;
 				}
-				space();
-				sprintf(buf5,"맞춘 문제 수 : %d 점수 : %d",cnt,score);
-				gtk_label_set_text(GTK_LABEL(scorelabel),buf5);
+			}
+			if(click==0){
+				if(strcmp(first,second)==0 && ((first_1 != second_1) || (first_2 != second_2))){
+					cnt++;
+					score += 5;
+					check[first_1][first_2] = 1;
+					check[second_1][second_2] = 1;
+					sprintf(buf5,"맞춘 문제 수 : %d 점수 : %d",cnt,score);
+					gtk_label_set_text(GTK_LABEL(scorelabel),buf5);
+				}
+				else
+				{
+					int i,j;
+					j=0;
+					if(score != 0)
+						score -= 1;
+					for(i=0;i<400000;i++){
+						j=j+1;
+					}
+					space();
+					sprintf(buf5,"맞춘 문제 수 : %d 점수 : %d",cnt,score);
+					gtk_label_set_text(GTK_LABEL(scorelabel),buf5);
+				}
 			}
 		}
 	}
@@ -483,7 +606,6 @@ void buttonClicked(GtkWidget *widget){
 int main(int argc, char *argv[])
 {
 	gtk_init(&argc, &argv);
-	srand((unsigned)time(NULL)); //계속 바뀌는 랜덤값을 받기 위한 부분
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	timelabel = gtk_label_new("Remaining Time: 1:00");
@@ -580,7 +702,6 @@ int main(int argc, char *argv[])
 	gtk_container_add(GTK_CONTAINER(vbox1),scorelabel);		
 	gtk_container_add(GTK_CONTAINER(vbox1),donelabel);	
 	//button클릭시 이벤트 발생 부분.
-	//clicked event enrollment and callback function
 	g_signal_connect(G_OBJECT(button1),"clicked", G_CALLBACK(buttonClicked), NULL);
 	g_signal_connect(G_OBJECT(button2),"clicked", G_CALLBACK(buttonClicked), NULL);
 	g_signal_connect(G_OBJECT(button3),"clicked", G_CALLBACK(buttonClicked), NULL);

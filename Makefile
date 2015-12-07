@@ -1,4 +1,4 @@
-DIRS = lib player
+DIRS = lib player  
 .PHONY: all clean
 
 all:

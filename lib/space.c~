@@ -1,5 +1,4 @@
 #include<gtk/gtk.h>
-#include "globalVar.h"
 
 void space()		//모든 button에 빈공간을 넣어주는 부분.
 {

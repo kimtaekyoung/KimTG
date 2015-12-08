@@ -1,4 +1,8 @@
 #include<gtk/gtk.h>
+#include "globalVar.h"
+#include "timerHandler.h"
+#include "cardClear.h"
+#include "doneLabel.h"
 
 void buttonClicked(GtkWidget *widget){	
 	int i, j;

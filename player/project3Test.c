@@ -4,150 +4,12 @@
 #include<string.h>
 #include "buttonClicked.h"
 #include "cardClear.h"
-<<<<<<< HEAD
+#include "cardset.h"
+#include "clickclear.h"
 #include "doneLabel.h"
+#include "space.h"
 #include "timerHandler.h"
 #include "globalVar.h"
-
-void card_set(){
-	random_card[0][0][0] = "A";
-	random_card[0][0][1] = "B";
-	random_card[0][0][2] = "C";
-	random_card[0][0][3] = "D";
-	random_card[0][1][0] = "A";
-	random_card[0][1][1] = "F";
-	random_card[0][1][2] = "G";
-	random_card[0][1][3] = "H";
-	random_card[0][2][0] = "E";
-	random_card[0][2][1] = "E";
-	random_card[0][2][2] = "F";
-	random_card[0][2][3] = "G";
-	random_card[0][3][0] = "H";
-	random_card[0][3][1] = "C";
-	random_card[0][3][2] = "B";
-	random_card[0][3][3] = "D";
-
-	random_card[1][0][0] = "T";
-	random_card[1][0][1] = "Y";
-	random_card[1][0][2] = "U";
-	random_card[1][0][3] = "I";
-	random_card[1][1][0] = "O";
-	random_card[1][1][1] = "P";
-	random_card[1][1][2] = "T";
-	random_card[1][1][3] = "P";
-	random_card[1][2][0] = "O";
-	random_card[1][2][1] = "R";
-	random_card[1][2][2] = "E";
-	random_card[1][2][3] = "R";
-	random_card[1][3][0] = "Y";
-	random_card[1][3][1] = "U";
-	random_card[1][3][2] = "E";
-	random_card[1][3][3] = "I";
-
-	random_card[2][0][0] = "A";
-	random_card[2][0][1] = "D";
-	random_card[2][0][2] = "S";
-	random_card[2][0][3] = ".";
-	random_card[2][1][0] = ",";
-	random_card[2][1][1] = ";";
-	random_card[2][1][2] = ";";
-	random_card[2][1][3] = "S";
-	random_card[2][2][0] = "D";
-	random_card[2][2][1] = "A";
-	random_card[2][2][2] = ",";
-	random_card[2][2][3] = ".";
-	random_card[2][3][0] = "W";
-	random_card[2][3][1] = "P";
-	random_card[2][3][2] = "W";
-	random_card[2][3][3] = "P";
-
-	random_card[3][0][0] = "q";
-	random_card[3][0][1] = "w";
-	random_card[3][0][2] = "e";
-	random_card[3][0][3] = "Q";
-	random_card[3][1][0] = "A";
-	random_card[3][1][1] = "a";
-	random_card[3][1][2] = "E";
-	random_card[3][1][3] = "e";
-	random_card[3][2][0] = "D";
-	random_card[3][2][1] = "A";
-	random_card[3][2][2] = "Q";
-	random_card[3][2][3] = "D";
-	random_card[3][3][0] = "a";
-	random_card[3][3][1] = "q";
-	random_card[3][3][2] = "w";
-	random_card[3][3][3] = "E";
-
-	random_card[4][0][0] = "1";
-	random_card[4][0][1] = "3";
-	random_card[4][0][2] = "A";
-	random_card[4][0][3] = "D";
-	random_card[4][1][0] = "d";
-	random_card[4][1][1] = "a";
-	random_card[4][1][2] = "c";
-	random_card[4][1][3] = "3";
-	random_card[4][2][0] = "c";
-	random_card[4][2][1] = "1";
-	random_card[4][2][2] = "d";
-	random_card[4][2][3] = "A";
-	random_card[4][3][0] = "D";
-	random_card[4][3][1] = "4";
-	random_card[4][3][2] = "4";
-	random_card[4][3][3] = "a";
-}
-
-void space()		//모든 button에 빈공간을 넣어주는 부분.
-{
-	if(check[0][0] != 1){
-		gtk_button_set_label(GTK_BUTTON(button1)," ");
-	}
-	if(check[0][1] != 1){
-		gtk_button_set_label(GTK_BUTTON(button2)," ");
-	}
-	if(check[0][2] != 1){
-		gtk_button_set_label(GTK_BUTTON(button3)," ");
-	}
-	if(check[0][3] != 1){
-		gtk_button_set_label(GTK_BUTTON(button4)," ");
-	}
-	if(check[1][0] != 1){
-		gtk_button_set_label(GTK_BUTTON(button5)," ");
-	}
-	if(check[1][1] != 1){
-		gtk_button_set_label(GTK_BUTTON(button6)," ");
-	}
-	if(check[1][2] != 1){
-		gtk_button_set_label(GTK_BUTTON(button7)," ");
-	}
-	if(check[1][3] != 1){
-		gtk_button_set_label(GTK_BUTTON(button8)," ");
-	}
-	if(check[2][0] != 1){
-		gtk_button_set_label(GTK_BUTTON(button9)," ");
-	}
-	if(check[2][1] != 1){
-		gtk_button_set_label(GTK_BUTTON(button10)," ");
-	}
-	if(check[2][2] != 1){
-		gtk_button_set_label(GTK_BUTTON(button11)," ");
-	}
-	if(check[2][3] != 1){
-		gtk_button_set_label(GTK_BUTTON(button12)," ");
-	}
-	if(check[3][0] != 1){
-		gtk_button_set_label(GTK_BUTTON(button13)," ");
-	}
-	if(check[3][1] != 1){
-		gtk_button_set_label(GTK_BUTTON(button14)," ");
-	}
-	if(check[3][2] != 1){
-		gtk_button_set_label(GTK_BUTTON(button15)," ");
-	}
-	if(check[3][3] != 1){
-		gtk_button_set_label(GTK_BUTTON(button16)," ");
-	}	
-	return;
-}
 
 void buttonClicked(GtkWidget *widget){	
 	int i, j;
@@ -495,35 +357,7 @@ void buttonClicked(GtkWidget *widget){
 	return;
 }
 
-=======
-#include "cardset.h"
-#include "clickclear.h"
-#include "globalVar.h"
-#include "space.h"
 
-int done_label()	//시간이 0이 될 경우 done를 출력해는 부분
-{
-	sprintf(buf2,"%s","done");
-	gtk_label_set_text(GTK_LABEL(donelabel),buf2);
-	return 0;
-}
-int timer_handler(gpointer data)	
-{	
-	Time -= 1;
-	m=Time/60;
-	s=Time%60;
-	//buf에 Remaining Time: m:s를 저장 한뒤
-	sprintf(buf,"Remaining Time: %d:%02d",m,s);
-	//timelabel에 buf값 출력
-	gtk_label_set_text(GTK_LABEL(timelabel),buf);
-	if(Time > 0 && cnt<8 )	return 1; //시간이 아직 0:00보다 클 경우 계속 실행
-	else{		//시간이 0과 같거나 작을경우
-		sleep(1);
-		clear();
-		return done_label();
-	}
-}
->>>>>>> b7c4304751ade56963d51b83cf702e304895a2d8
 int main(int argc, char *argv[])
 {
 	gtk_init(&argc, &argv);

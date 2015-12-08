@@ -1,6 +1,3 @@
-#include<gtk/gtk.h>
-#include "globalVar.h"
-
 void buttonClicked(GtkWidget *widget){	
 	int i, j;
 	if(start == 0){

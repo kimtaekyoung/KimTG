@@ -4,15 +4,10 @@
 #include<string.h>
 #include "clickclear.h"
 #include "cardClear.h"
+#include "doneLabel.h"
+#include "timerHandler.h"
 #include "globalVar.h"
 
-
-int done_label()	//시간이 0이 될 경우 done를 출력해는 부분
-{
-	sprintf(buf2,"%s","done");
-	gtk_label_set_text(GTK_LABEL(donelabel),buf2);
-	return 0;
-}
 void card_set(){
 	random_card[0][0][0] = "A";
 	random_card[0][0][1] = "B";
@@ -152,22 +147,7 @@ void space()		//모든 button에 빈공간을 넣어주는 부분.
 	}	
 	return;
 }
-int timer_handler(gpointer data)	
-{	
-	Time -= 1;
-	m=Time/60;
-	s=Time%60;
-	//buf에 Remaining Time: m:s를 저장 한뒤
-	sprintf(buf,"Remaining Time: %d:%02d",m,s);
-	//timelabel에 buf값 출력
-	gtk_label_set_text(GTK_LABEL(timelabel),buf);
-	if(Time > 0 && cnt<8 )	return 1; //시간이 아직 0:00보다 클 경우 계속 실행
-	else{		//시간이 0과 같거나 작을경우
-		sleep(1);
-		clear();
-		return done_label();
-	}
-}
+
 void buttonClicked(GtkWidget *widget){	
 	int i, j;
 	if(start == 0){

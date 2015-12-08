@@ -2,7 +2,7 @@ INC = -I../include/
 GTK = `pkg-config gtk+-2.0 --cflags --libs `
 GTKCFILE = cardClear.c doneLabel.c timerHandler.c cardset.c space.c
 GTKOBJ = cardClear.o doneLabel.o timerHandler.o cardset.o space.o
-TARGET = libclear_lib.a libtime_lib.a libbtnClicked_lib.a
+TARGET = libclear_lib.a libtime_lib.a
 
 all : $(TARGET)
 

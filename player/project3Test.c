@@ -2,10 +2,12 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<string.h>
-#include "clickclear.h"
+#include "buttonClicked.h"
 #include "cardClear.h"
+#include "cardset.h"
+#include "clickclear.h"
 #include "globalVar.h"
-
+#include "space.h"
 
 int done_label()	//시간이 0이 될 경우 done를 출력해는 부분
 {

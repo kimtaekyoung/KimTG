@@ -1,9 +1,0 @@
-#include<gtk/gtk.h>
-#include<string.h>
-#include "timerHandler.h"
-#include "cardClear.h"
-#include "doneLabel.h"
-#include "globalVar.h"
-
-int timer_handler(gpointer data);	
-

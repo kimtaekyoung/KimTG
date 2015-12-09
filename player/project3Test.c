@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<string.h>
-#include "buttonClicked.h"
 #include "cardClear.h"
 #include "cardset.h"
 #include "clickclear.h"

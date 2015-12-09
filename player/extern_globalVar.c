@@ -1,6 +1,5 @@
 #include "globalVar.h"
 
-
 GtkWidget* window;
 GtkWidget* timelabel;
 GtkWidget* scorelabel;
